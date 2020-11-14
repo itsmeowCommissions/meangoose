@@ -1,0 +1,22 @@
+modLoader="javafml"
+loaderVersion="[31,)"
+credits="itsmeow for Programming"
+authors="itsmeow"
+[[mods]]
+modId="meangoose"
+version="${file.jarVersion}"
+displayName="Mean Goose"
+description='''
+Adds /meangoose which lets you summon meaner versions of entities. Specifically geese from Better Animals Plus.'''
+[[dependencies.meangoose]]
+    modId="forge"
+    mandatory=true
+    versionRange="[31.2.0,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.meangoose]]
+    modId="betteranimalsplus"
+    mandatory=true
+    versionRange="[10,)"
+    ordering="NONE"
+    side="BOTH"
