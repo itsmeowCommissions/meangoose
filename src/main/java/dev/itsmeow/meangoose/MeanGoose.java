@@ -40,29 +40,33 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 
 @Mod(value = MeanGoose.MODID)
+@Mod.EventBusSubscriber(modid = MeanGoose.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class MeanGoose {
 
     public static final String MODID = "meangoose";
     private static final SimpleCommandExceptionType SUMMON_FAILED = new SimpleCommandExceptionType(new TranslationTextComponent("commands.summon.failed"));
 
     public MeanGoose() {
-        MinecraftForge.EVENT_BUS.addListener((final FMLServerStartingEvent event) -> {
-            CommandDispatcher<CommandSource> d = event.getCommandDispatcher();
-            d.register(Commands.literal("meangoose").requires((source) -> {
-                return source.hasPermissionLevel(2);
-             }).then(Commands.argument("entity", EntitySummonArgument.entitySummon()).suggests(SuggestionProviders.SUMMONABLE_ENTITIES).executes((ctx) -> {
-                return summonEntity(ctx.getSource(), EntitySummonArgument.getEntityId(ctx, "entity"), ctx.getSource().getPos(), new CompoundNBT(), true);
-             }).then(Commands.argument("pos", Vec3Argument.vec3()).executes((ctx) -> {
-                return summonEntity(ctx.getSource(), EntitySummonArgument.getEntityId(ctx, "entity"), Vec3Argument.getVec3(ctx, "pos"), new CompoundNBT(), true);
-             }).then(Commands.argument("nbt", NBTCompoundTagArgument.nbt()).executes((ctx) -> {
-                return summonEntity(ctx.getSource(), EntitySummonArgument.getEntityId(ctx, "entity"), Vec3Argument.getVec3(ctx, "pos"), NBTCompoundTagArgument.getNbt(ctx, "nbt"), false);
-             })))));
-        });
+
+    }
+
+    @SubscribeEvent
+    public static void onServerStarting(FMLServerStartingEvent event) {
+        CommandDispatcher<CommandSource> d = event.getCommandDispatcher();
+        d.register(Commands.literal("meangoose").requires((source) -> {
+            return source.hasPermissionLevel(2);
+         }).then(Commands.argument("entity", EntitySummonArgument.entitySummon()).suggests(SuggestionProviders.SUMMONABLE_ENTITIES).executes((ctx) -> {
+            return summonEntity(ctx.getSource(), EntitySummonArgument.getEntityId(ctx, "entity"), ctx.getSource().getPos(), new CompoundNBT(), true);
+         }).then(Commands.argument("pos", Vec3Argument.vec3()).executes((ctx) -> {
+            return summonEntity(ctx.getSource(), EntitySummonArgument.getEntityId(ctx, "entity"), Vec3Argument.getVec3(ctx, "pos"), new CompoundNBT(), true);
+         }).then(Commands.argument("nbt", NBTCompoundTagArgument.nbt()).executes((ctx) -> {
+            return summonEntity(ctx.getSource(), EntitySummonArgument.getEntityId(ctx, "entity"), Vec3Argument.getVec3(ctx, "pos"), NBTCompoundTagArgument.getNbt(ctx, "nbt"), false);
+         })))));
     }
 
     private static int summonEntity(CommandSource source, ResourceLocation type, Vec3d pos, CompoundNBT nbt, boolean randomizeProperties) throws CommandSyntaxException {
